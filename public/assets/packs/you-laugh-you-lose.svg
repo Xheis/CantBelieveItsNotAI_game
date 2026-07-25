@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img">
+  <title>You Laugh You Lose</title>
+
+  <defs>
+    <linearGradient id="ylylGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fde047" />
+      <stop offset="1" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="56" fill="#111827" />
+
+  <circle cx="128" cy="128" r="86" fill="url(#ylylGradient)" />
+
+  <path
+    d="M86 104q14-18 28 0M142 104q14-18 28 0"
+    fill="none"
+    stroke="#111827"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M84 148q44 44 88 0"
+    fill="none"
+    stroke="#111827"
+    stroke-width="16"
+    stroke-linecap="round"
+  />
+
+  <path
+    d="M76 122q-8 18 0 30M180 122q8 18 0 30"
+    fill="none"
+    stroke="#38bdf8"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+</svg>

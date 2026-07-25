@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img">
+  <title>Superman Sports</title>
+
+  <defs>
+    <linearGradient id="supermanSportsGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6" />
+      <stop offset="1" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="56" fill="#111827" />
+
+  <path
+    d="M128 28l74 26v58c0 48-31 82-74 98-43-16-74-50-74-98V54z"
+    fill="url(#supermanSportsGradient)"
+  />
+
+  <polygon
+    points="128,66 141,99 176,99 148,120 159,154 128,133 97,154 108,120 80,99 115,99"
+    fill="#fbbf24"
+  />
+
+  <path
+    d="M54 84l26 18M202 84l-26 18M54 152l26-18M202 152l-26-18"
+    stroke="#ef4444"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+</svg>

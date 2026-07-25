@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I Can’t Believe It’s Not AI!</title>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+
+<body class="main-body" data-phase="lobby">
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img class="brand__logo" src="/assets/logo.svg" alt="I Can’t Believe It’s Not AI!" />
+      </div>
+
+      <div class="badges">
+        <div class="badge badge--pack" data-pack-badge>
+          <img data-pack-logo alt="" hidden />
+          <span data-pack-name>Pack</span>
+        </div>
+
+        <div class="badge" data-speed-badge>Speed Bonus Off</div>
+
+        <button class="icon-btn" data-mute-button aria-label="Toggle sound">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <main class="screen screen--reel">
+      <section class="panel panel--lobby is-active" data-panel="lobby">
+        <div class="emoji-saver" data-emoji-saver></div>
+
+        <div class="lobby">
+          <div class="lobby__left card">
+            <div class="pack-hero">
+              <img class="pack-hero__logo" data-pack-hero-logo alt="" hidden />
+              <div class="pack-hero__name" data-pack-hero-name></div>
+              <div class="pack-hero__description" data-pack-hero-description></div>
+            </div>
+
+            <img class="qr" data-qr alt="QR code to join game" />
+            <div class="join-label">Scan to join</div>
+            <div class="join-url" data-join-url></div>
+            <div class="join-url join-url--mdns" data-mdns-url></div>
+            <div class="warnings" data-warnings></div>
+          </div>
+
+          <div class="lobby__right card">
+            <h2 class="panel-title">Players</h2>
+            <div class="player-grid" data-player-grid></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--rules" data-panel="rules">
+        <div class="rules">
+          <div class="card rules__left">
+            <h2 class="panel-title">Example Leaderboard</h2>
+            <div class="leaderboard" data-rules-leaderboard></div>
+          </div>
+
+          <div class="card rules__right">
+            <h2 class="panel-title">How To Play</h2>
+
+            <ol class="rules-steps" data-rules-steps>
+              <li class="rules-step">
+                <div class="rules-step__icon">🎬</div>
+                <div>
+                  <div class="rules-step__title">Watch</div>
+                  <div class="rules-step__text">
+                    A 7 second video plays on the main screen.
+                  </div>
+                </div>
+              </li>
+
+              <li class="rules-step">
+                <div class="rules-step__icon">🤔</div>
+                <div>
+                  <div class="rules-step__title">Vote</div>
+                  <div class="rules-step__text">
+                    You have 7 seconds to vote AI or REAL.
+                  </div>
+                </div>
+              </li>
+
+              <li class="rules-step">
+                <div class="rules-step__icon">💥</div>
+                <div>
+                  <div class="rules-step__title">Reveal</div>
+                  <div class="rules-step__text">
+                    The truth is stamped on screen.
+                  </div>
+                </div>
+              </li>
+
+              <li class="rules-step">
+                <div class="rules-step__icon">🏆</div>
+                <div>
+                  <div class="rules-step__title">Leaderboard</div>
+                  <div class="rules-step__text">
+                    Correct votes earn points. Best score wins.
+                  </div>
+                </div>
+              </li>
+            </ol>
+
+            <div class="rules-countdown" data-rules-countdown>
+              Starting soon…
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--stage" data-panel="stage">
+        <div class="stage" data-stage>
+          <video class="stage__video" data-video playsinline></video>
+          <div class="stage__scanlines" aria-hidden="true"></div>
+          <div class="stage__glitch" aria-hidden="true"></div>
+
+          <div class="video-progress" aria-hidden="true">
+            <div class="video-progress__fill" data-video-progress></div>
+          </div>
+
+          <div class="round-overlay" data-round-overlay hidden>
+            <div class="round-card">
+              <div class="round-card__label">Round</div>
+              <div class="round-card__number" data-round-number>1</div>
+              <div class="round-card__hint">Watch closely.</div>
+            </div>
+          </div>
+
+          <div class="stage-overlay">
+            <div class="vote-tally" data-vote-count></div>
+
+            <div class="countdown" data-countdown hidden>
+              <svg class="countdown__ring" viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="countdown__track" cx="60" cy="60" r="54"></circle>
+                <circle class="countdown__progress" data-countdown-progress cx="60" cy="60" r="54"></circle>
+              </svg>
+
+              <div class="countdown__number" data-countdown-number>7</div>
+            </div>
+
+            <div class="stamp" data-stamp hidden></div>
+
+            <div class="round-results" data-round-results></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel--leaderboard" data-panel="leaderboard">
+        <div class="leaderboard-wrap card">
+          <h2 class="panel-title">Leaderboard</h2>
+          <div class="leaderboard" data-leaderboard></div>
+        </div>
+      </section>
+
+      <section class="panel panel--final" data-panel="final">
+        <div class="final-wrap">
+          <div class="final" data-final></div>
+          <canvas class="confetti" data-confetti></canvas>
+        </div>
+      </section>
+    </main>
+
+    <div class="captions" data-captions></div>
+
+    <div class="unlock" data-unlock>
+      <div class="unlock__card card">
+        <h1 class="unlock__title">I Can’t Believe It’s Not AI!</h1>
+        <p class="unlock__text">
+          Click below to enable audio and video playback.
+        </p>
+        <button class="btn btn--primary" data-unlock-button>
+          Enter Party
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+
+</html>

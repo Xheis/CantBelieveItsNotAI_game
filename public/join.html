@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Join — I Can’t Believe It’s Not AI!</title>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+
+<body class="controller-body" data-phase="join">
+  <main class="controller">
+    <section class="controller-screen" data-screen-join>
+      <h1 class="controller-title">Join Game</h1>
+
+      <label class="field">
+        <span class="field__label">Name</span>
+        <input class="field__input" data-name-input maxlength="16" placeholder="Your name" autocomplete="off" />
+      </label>
+
+      <div class="avatar-picker">
+        <div class="avatar-preview" data-avatar-preview></div>
+
+        <div class="avatar-tabs">
+          <button class="btn btn--small" data-avatar-tab="emoji">Emoji</button>
+          <button class="btn btn--small" data-avatar-tab="upload">Upload</button>
+        </div>
+
+        <div class="avatar-emoji-grid" data-emoji-grid></div>
+
+        <!-- <button class="btn btn--secondary" data-upload-button hidden>
+          Choose Image
+        </button> -->
+
+        <input type="file" accept="image/png,image/jpeg,image/webp" data-avatar-file hidden />
+      </div>
+
+      <button class="btn btn--primary btn--large" data-join-button>
+        Join
+      </button>
+
+      <div class="status" data-status></div>
+    </section>
+
+    <section class="controller-screen" data-screen-lobby hidden>
+      <div class="controller-header">
+        <h2 class="controller-title controller-title--small">Lobby</h2>
+        <button class="btn btn--small" data-edit-profile-button>
+          Edit Profile
+        </button>
+      </div>
+
+      <div class="host-settings" data-host-settings hidden>
+        <div class="card">
+          <h3 class="card__title">Host Settings</h3>
+
+          <div class="pack-selector" data-pack-selector></div>
+
+          <label class="switch">
+            <input type="checkbox" data-speed-toggle />
+            <span>Speed Bonus</span>
+          </label>
+
+          <button class="btn btn--primary btn--large" data-start-button>
+            Start Game
+          </button>
+
+          <div class="warnings warnings--small" data-host-warnings></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card__title">Players</h3>
+        <div class="player-list" data-player-list></div>
+      </div>
+    </section>
+
+    <section class="controller-screen" data-screen-watch hidden>
+      <div class="watch-card card">
+        <div class="watch-card__emoji">👀</div>
+        <h2 class="controller-title controller-title--small" data-watch-title>
+          Watch the screen
+        </h2>
+        <p class="watch-card__text" data-watch-text>
+          The clip is playing.
+        </p>
+      </div>
+    </section>
+
+    <section class="controller-screen" data-screen-voting hidden>
+      <div class="countdown countdown--small" data-controller-countdown>
+        <svg class="countdown__ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="countdown__track" cx="60" cy="60" r="54"></circle>
+          <circle class="countdown__progress" data-countdown-progress cx="60" cy="60" r="54"></circle>
+        </svg>
+
+        <div class="countdown__number" data-countdown-number>7</div>
+      </div>
+
+      <div class="vote-buttons">
+        <button class="vote-btn vote-btn--ai" data-vote="ai">
+          <span class="vote-btn__icon">🤖</span>
+          <span class="vote-btn__label">AI</span>
+        </button>
+
+        <button class="vote-btn vote-btn--real" data-vote="real">
+          <span class="vote-btn__icon">🧍</span>
+          <span class="vote-btn__label">REAL</span>
+        </button>
+      </div>
+
+      <div class="vote-status" data-vote-status></div>
+    </section>
+
+    <section class="controller-screen" data-screen-result hidden>
+      <div class="result" data-result></div>
+    </section>
+  </main>
+
+  <script type="module" src="/js/join.js"></script>
+</body>
+
+</html>
