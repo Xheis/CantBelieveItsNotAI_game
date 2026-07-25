@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-robot" viewBox="0 0 24 24">
+    <rect x="5" y="7" width="14" height="11" rx="3" fill="currentColor" />
+    <circle cx="9.5" cy="12.5" r="1.6" fill="#05070d" />
+    <circle cx="14.5" cy="12.5" r="1.6" fill="#05070d" />
+    <rect x="11" y="3" width="2" height="4" rx="1" fill="currentColor" />
+    <circle cx="12" cy="3" r="1.6" fill="currentColor" />
+  </symbol>
+
+  <symbol id="icon-human" viewBox="0 0 24 24">
+    <circle cx="12" cy="7" r="4" fill="currentColor" />
+    <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" fill="currentColor" />
+  </symbol>
+</svg>
