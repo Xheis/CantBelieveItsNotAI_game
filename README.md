@@ -1,7 +1,4 @@
-# README.md
-
-```markdown
-# I Can't Believe It's Not AI!
+# I Can't Believe It's Not AI
 
 **🤖 AI** — *or* — **🧍 REAL** · you have seven seconds to decide.
 
@@ -15,32 +12,17 @@ Correct guesses earn points. Ten rounds later, one smug winner remains.
 No cloud. No accounts. No internet required. Just one laptop, a TV, and your
 most gullible friends.
 
-![LAN only](https://img.shields.io/badge/network-LAN%20only-f97316)
-![Players](https://img.shields.io/badge/players-2–20-10b981)
-![Rounds](https://img.shields.io/badge/rounds-10-f43f5e)
-![Node](https://img.shields.io/badge/node-20%2B-339933)
-
 ---
 
 ## Screenshots
 
-| Main screen (host / TV) | Phone controller |
-|:---:|:---:|
-| <!-- 📸 DROP: docs/screenshots/host-round.png (1920×1080 recommended) --> <img src="docs/screenshots/host-round.png" alt="Main screen showing a video round with the vote countdown" width="560" /> | <!-- 📸 DROP: docs/screenshots/mobile-voting.png (portrait, ~390×844) --> <img src="docs/screenshots/mobile-voting.png" alt="Phone controller showing the AI / REAL vote buttons" width="240" /> |
-
-*These render automatically once you drop the files into `docs/screenshots/`.*
-
-<details>
-<summary><b>More screenshot slots</b> — lobby, stamp reveal, leaderboard, final</summary>
-
 | Lobby + QR | In-game |
 |:---:|:---:|
-|<img src="docs/screenshots/host-lobby.png" alt="Lobby with QR code and bouncing emojis" width="280" /> | <img src="docs/screenshots/main2.png" alt="Big REAL stamp with splatter effect" width="280" /> | <!-- 📸 DROP: docs/screenshots/host-leaderboard.png --> <img src="docs/screenshots/host-leaderboard.png" alt="Animated leaderboard" width="280" /> | <!-- 📸 DROP: docs/screenshots/host-final.png --> <img src="docs/screenshots/host-final.png" alt="Final winner celebration with confetti" width="280" /> |
-
+|<img src="docs/screenshots/host-lobby.png" alt="Lobby with QR code and bouncing emojis" width="380" /> | <img src="docs/screenshots/main2.png" alt="Big REAL stamp with splatter effect" width="380" /> |  <img src="docs/screenshots/host-leaderboard.png" alt="Animated leaderboard" width="280" /> | <!-- 📸 DROP: docs/screenshots/host-final.png --> <img src="docs/screenshots/host-final.png" alt="Final winner celebration with confetti" width="280" /> |
 
 | Mobile lobby (host) | Mobile Vote | Mobile Score |
-|:---:|:---:|
-|<img src="docs/screenshots/mobile-join.png" alt="Phone join screen with name and avatar picker" width="240" /> |<img src="docs/screenshots/mobile-vote.png" alt="Host phone showing pack selector and start button" width="240" /> |<img src="docs/screenshots/mobile-score.png" alt="Host phone showing pack selector and start button" width="240" /> |
+|:---:|:---:|:---:|
+|<img src="docs/screenshots/mobile-host-lobby.png" alt="Phone join screen with name and avatar picker" width="240" /> |<img src="docs/screenshots/mobile-vote.png" alt="Host phone showing pack selector and start button" width="240" /> |<img src="docs/screenshots/mobile-score.png" alt="Host phone showing pack selector and start button" width="240" /> |
 
 </details>
 
@@ -48,25 +30,22 @@ most gullible friends.
 
 ## How a game goes down
 
-```
-
-LOBBY            players scan the QR, pick an avatar, trash-talk
-  │              host picks a pack, toggles speed bonus, hits START
-  ▼
-RULES  35s       narrated explanation (rules-01.wav), fake demo leaderboard
-  ▼
-┌─ ROUND ×10 ────────────────────────────────────────────────┐
-│  INTRO     2.2s   round card swipes up, clip preloads      │
-│  CLIP      7.0s   the video plays. silence. suspicion.     │
-│  VOTE      7.0s   phones light up: 🤖 AI or 🧍 REAL        │
-│  REVEAL    5.0s   suspense… then the STAMP slams down      │
-│  BOARD     5.0s   scores tally, ranks overtake, voice gloats│
-└────────────────────────────────────────────────────────────┘
-  ▼
+LOBBY            players scan the QR, pick an avatar, trash-talk  
+  │              host picks a pack, toggles speed bonus, hits START  
+  ▼  
+RULES  35s       narrated explanation (rules-01.wav), fake demo leaderboard  
+  ▼  
+┌─ ROUND ×10 ─────────────────────────┐  
+│  INTRO     2.2s   round card swipes up, clip preloads  
+│  CLIP      7.0s   the video plays. silence. suspicion  
+│  VOTE      7.0s   phones light up: 🤖 AI or 🧍 REAL  
+│  REVEAL    5.0s   suspense… then the STAMP slams down  
+│  BOARD     5.0s   scores tally, ranks overtake, voice gloat  
+└───────────────────────────────────┘  
+  │  
+  ▼  
 FINAL            confetti, podium, one champion, everyone else in denial
                  host taps "Back to Lobby" and runs it back
-
-```
 
 **Scoring.** A correct vote is worth **1,000 points**. With the host's
 *Speed Bonus* toggle on, faster votes earn up to **500 extra**.
