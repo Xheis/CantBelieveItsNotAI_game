@@ -1727,12 +1727,12 @@ button {
   color: var(--accent-2);
 }
 
-.rules-demo-player__vote.is-correct {
+.rules-demo-player__vote.is-real {
   background: rgba(16, 185, 129, 0.2);
   color: var(--real);
 }
 
-.rules-demo-player__vote.is-wrong {
+.rules-demo-player__vote.is-ai {
   background: rgba(244, 63, 94, 0.2);
   color: var(--ai);
 }

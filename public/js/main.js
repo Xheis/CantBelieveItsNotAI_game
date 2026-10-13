@@ -346,40 +346,40 @@ function renderLobby() {
   emojiSaver.start();
 }
 
-// const RULES_CAST = [
-//   {
-//     id: "rules-1",
-//     name: "Alice",
-//     avatar: { kind: "emoji", value: "🦝" },
-//   },
-//   {
-//     id: "rules-2",
-//     name: "Bob",
-//     avatar: { kind: "emoji", value: "🍕" },
-//   },
-//   {
-//     id: "rules-3",
-//     name: "Chloe",
-//     avatar: { kind: "emoji", value: "🐸" },
-//   },
-//   {
-//     id: "rules-4",
-//     name: "Dan",
-//     avatar: { kind: "emoji", value: "🤖" },
-//   },
-//   {
-//     id: "rules-5",
-//     name: "Erin",
-//     avatar: { kind: "emoji", value: "🔥" },
-//   },
-// ];
+const RULES_CAST = [
+  {
+    id: "rules-1",
+    name: "Alice",
+    avatar: { kind: "emoji", value: "🦝" },
+  },
+  {
+    id: "rules-2",
+    name: "Bob",
+    avatar: { kind: "emoji", value: "🍕" },
+  },
+  {
+    id: "rules-3",
+    name: "Chloe",
+    avatar: { kind: "emoji", value: "🐸" },
+  },
+  {
+    id: "rules-4",
+    name: "Dan",
+    avatar: { kind: "emoji", value: "🤖" },
+  },
+  {
+    id: "rules-5",
+    name: "Erin",
+    avatar: { kind: "emoji", value: "🔥" },
+  },
+];
 
 function renderRules() {
   const key = `rules:${state.phaseStartedAt}`;
 
   if (key !== lastRulesKey) {
     lastRulesKey = key;
-    startRulesDemo();
+    // Don't start demo here - it will start when rulesDemo phase begins
   }
 
   updateRulesCountdown();
@@ -463,16 +463,18 @@ function startRulesDemo() {
 
 function scheduleDemoVotes() {
   for (const player of rulesDemoState.players) {
-    const delay = 500 + Math.random() * 5500;
+    const delay = 1000 + Math.random() * 6500;
 
     setTimeout(() => {
       if (rulesDemoState.phase !== "voting") return;
 
-      player.vote = Math.random() < 0.5 ? "ai" : "real";
+      if(!player.voteLockedAt) {
+      player.vote = Math.random() < 0.55 ? "ai" : "real";
       player.voteLockedAt = Date.now();
+      audio.playSfx("vote-select");
+      }
       renderDemoPlayers();
     }, delay);
-    audio.playSfx("vote-select");
   }
 }
 
@@ -496,7 +498,7 @@ function renderDemoPlayers() {
 
     if (player.vote) {
       vote.textContent = player.vote.toUpperCase();
-      vote.classList.add(player.vote === rulesDemoState.result ? "is-correct" : "is-wrong");
+      vote.classList.add(player.vote === "real" ? "is-real" : "is-ai");
     } else if (rulesDemoState.phase === "voting") {
       vote.textContent = "•••";
       vote.classList.add("is-voting");
@@ -510,12 +512,58 @@ function renderDemoPlayers() {
 }
 
 function showDemoStamp(result) {
-  elements.rulesDemoStamp.textContent = result === "ai" ? "AI" : "REAL";
-  elements.rulesDemoStamp.className = `stamp stamp--${result}`;
-  elements.rulesDemoStamp.hidden = false;
+  const stamp = elements.rulesDemoStamp;
 
-  void elements.rulesDemoStamp.offsetWidth;
-  elements.rulesDemoStamp.classList.add("is-visible");
+  stamp.className = `stamp stamp--${result}`;
+  stamp.hidden = true;
+  stamp.classList.remove("is-visible");
+  stamp.replaceChildren();
+
+  const splatter = document.createElement("div");
+  splatter.className = "stamp__splatter";
+
+  const blobCount = 18;
+
+  for (let i = 0; i < blobCount; i += 1) {
+    const blob = document.createElement("i");
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 70 + Math.random() * 180;
+
+    const tx = Math.cos(angle) * distance;
+    const ty = Math.sin(angle) * distance;
+
+    const size = 10 + Math.random() * 54;
+    const scale = 0.7 + Math.random() * 1.5;
+    const delay = Math.random() * 90;
+
+    blob.style.setProperty("--tx", `${tx}px`);
+    blob.style.setProperty("--ty", `${ty}px`);
+    blob.style.setProperty("--size", `${size}px`);
+    blob.style.setProperty("--scale", scale.toFixed(2));
+    blob.style.setProperty("--delay", `${delay}ms`);
+
+    splatter.append(blob);
+  }
+
+  const text = document.createElement("div");
+  text.className = "stamp__text";
+  text.textContent = result === "ai" ? "AI" : "REAL";
+
+  stamp.append(splatter, text);
+
+  stamp.hidden = false;
+
+  void stamp.offsetWidth;
+  stamp.classList.add("is-visible");
+
+  elements.rulesDemoStage.classList.add("is-stamped");
+
+  audio.playSfx(result === "ai" ? "stamp-ai" : "stamp-real");
+
+  setTimeout(() => {
+    elements.rulesDemoStage.classList.remove("is-stamped");
+  }, 450);
 }
 
 function renderDemoLeaderboard() {
@@ -562,100 +610,100 @@ function updateRulesDemoCountdown() {
   });
 }
 
-// function stopRulesDemo() {
-//   clearTimeout(rulesDemoTimeout);
-//   clearInterval(rulesDemoInterval);
+function stopRulesLeaderboardDemo() {
+  clearTimeout(rulesDemoTimeout);
+  clearInterval(rulesDemoInterval);
 
-//   rulesDemoTimeout = null;
-//   rulesDemoInterval = null;
-//   rulesDemoState = null;
-// }
+  rulesDemoTimeout = null;
+  rulesDemoInterval = null;
+  rulesDemoState = null;
+}
 
-// function startRulesDemo() {
-//   stopRulesDemo();
+function startLeaderboardDemo() {
+  stopRulesLeaderboardDemo();
 
-//   if (!elements.rulesLeaderboard) return;
+  if (!elements.rulesLeaderboard) return;
 
-//   let players = RULES_CAST.map((player) => ({
-//     ...player,
-//     score: 0,
-//   }));
+  let players = RULES_CAST.map((player) => ({
+    ...player,
+    score: 0,
+  }));
 
-//   let entries = players.map((player, index) => ({
-//     ...player,
-//     rank: index + 1,
-//     prevRank: null,
-//     prevScore: 0,
-//     pointsEarned: 0,
-//     delta: 0,
-//   }));
+  let entries = players.map((player, index) => ({
+    ...player,
+    rank: index + 1,
+    prevRank: null,
+    prevScore: 0,
+    pointsEarned: 0,
+    delta: 0,
+  }));
 
-//   renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
-//     compact: false,
-//     youId: null,
-//   });
+  renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
+    compact: false,
+    youId: null,
+  });
 
-//   const tick = () => {
-//     if (state?.phase !== "rules") return;
+  const tick = () => {
+    if (state?.phase !== "rules") return;
 
-//     for (const player of players) {
-//       if (Math.random() < 0.65) {
-//         const options = [1000, 1000, 1500, 2000];
-//         player.score += options[Math.floor(Math.random() * options.length)];
-//       }
-//     }
+    for (const player of players) {
+      if (Math.random() < 0.65) {
+        const options = [1000, 1250, 1500];
+        player.score += options[Math.floor(Math.random() * options.length)];
+      }
+    }
 
-//     const prevById = new Map(entries.map((entry) => [entry.id, entry]));
+    const prevById = new Map(entries.map((entry) => [entry.id, entry]));
 
-//     const sorted = [...players].sort((a, b) => b.score - a.score);
+    const sorted = [...players].sort((a, b) => b.score - a.score);
 
-//     entries = sorted.map((player, index) => {
-//       const prev = prevById.get(player.id);
+    entries = sorted.map((player, index) => {
+      const prev = prevById.get(player.id);
 
-//       const prevRank = prev?.rank ?? null;
-//       const prevScore = prev?.score ?? 0;
+      const prevRank = prev?.rank ?? null;
+      const prevScore = prev?.score ?? 0;
 
-//       return {
-//         ...player,
-//         rank: index + 1,
-//         prevRank,
-//         prevScore,
-//         pointsEarned: Math.max(0, player.score - prevScore),
-//         delta: prevRank ? prevRank - (index + 1) : 0,
-//       };
-//     });
+      return {
+        ...player,
+        rank: index + 1,
+        prevRank,
+        prevScore,
+        pointsEarned: Math.max(0, player.score - prevScore),
+        delta: prevRank ? prevRank - (index + 1) : 0,
+      };
+    });
 
-//     renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
-//       compact: false,
-//       youId: null,
-//     });
-//   };
+    renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
+      compact: false,
+      youId: null,
+    });
+  };
 
-//   rulesDemoTimeout = setTimeout(tick, 7500);
-//   rulesDemoInterval = setInterval(tick, 10000);
+  rulesDemoTimeout = setTimeout(tick, 7500);
+  rulesDemoInterval = setInterval(tick, 5000);
 
-//   startRulesSteps();
-// }
+  startRulesSteps();
+}
 
-// function startRulesSteps() {
-//   if (!elements.rulesSteps) return;
+function startRulesSteps() {
+  if (!elements.rulesSteps) return;
 
-//   const steps = [...elements.rulesSteps.children];
+  const steps = [...elements.rulesSteps.children];
 
-//   let index = 0;
+  let index = 0;
 
-//   const activate = () => {
-//     steps.forEach((step, stepIndex) => {
-//       step.classList.toggle("is-active", stepIndex === index);
-//     });
+  const activate = () => {
+    steps.forEach((step, stepIndex) => {
+      step.classList.toggle("is-active", stepIndex === index);
+    });
 
-//     index = (index + 1) % steps.length;
-//   };
+    index = (index + 1) % steps.length;
+  };
 
-//   activate();
+  activate();
 
-//   rulesStepInterval = setInterval(activate, 2300);
-// }
+  rulesStepInterval = setInterval(activate, 2300);
+}
 
 function stopRulesDemo() {
   clearTimeout(rulesDemoTimeout);
@@ -937,28 +985,23 @@ function phaseEffects() {
 
   lastPhaseKey = phaseKey;
 
-  // Stop lobby voice scheduling and stop any voice already playing.
-  stopLobbyVoice();
-
-  if (state.phase == "rules") {
-    //audio.stopVoice();
-    //console.log("state.phase = rules, so stop the lobby voice lines");
-  }
-  // Stop rules announcement if we are leaving rules.
-  //audio.stopAnnouncement(0.15); //removed because we're breaking demos up now.
-
-  // Only clear the stamp timeout when leaving reveal,
-  // not when entering reveal.
-
-  console.log(state.phase);
-  if (state.phase !== "reveal") {
-    console.log("state.phase NOT REVEAL");
-    console.log(state.phase);
-    clearTimeout(revealTimeout);
-  }
-
+  clearTimeout(revealTimeout);
   confettiControl?.stop?.();
   stopRulesDemo();
+
+  // Only stop announcement when leaving rules-related phases
+  if (
+    lastPhaseKey &&
+    !lastPhaseKey.startsWith("rules:") &&
+    !lastPhaseKey.startsWith("rulesDemo:") &&
+    !lastPhaseKey.startsWith("rulesSplash:")
+  ) {
+    audio.stopAnnouncement(0.15);
+  }
+
+  if (state.phase !== "reveal") {
+    clearTimeout(revealTimeout);
+  }
 
   if (state.phase === "lobby") {
     emojiSaver.start();
@@ -968,28 +1011,38 @@ function phaseEffects() {
   }
 
   emojiSaver.stop();
+  stopLobbyVoice();
 
   switch (state.phase) {
     case "rules": {
+      stopLobbyVoice();
+      audio.stopAnnouncement(0.15);
       audio.stopMusic();
-
+      audio.playMusic("rules")
       //if (clock.remainingMs(state) > 3000) {
         audio.playAnnouncement("rules");
-      ///}
+      //}
+      startLeaderboardDemo();
 
+      // Don't start demo yet - just show the rules screen
+      break;
+    }
+
+    case "rulesDemo": {
+      //audio.stopMusic();
       startRulesDemo();
       break;
     }
-    case "rulesDemo": {
-      audio.stopMusic();
-      break;
-    }
+
 
     case "rulesSplash": {
-      audio.stopMusic();
-      audio.playSfx("winner");
-      break;
-    }
+        audio.stopMusic();
+        audio.unlock().then(() => {
+           audio.playMusic("final"); //play music
+        });
+        audio.stopAnnouncement(0.15);
+        break;
+      }
 
     case "intro": {
       audio.stopMusic();
@@ -1100,6 +1153,55 @@ function setVideoSrc(url, preloadMuted) {
 
   elements.video.muted = preloadMuted ? true : audio.muted;
 }
+
+// playVideo(src, volumeOverride = null, loop = false) {
+//   // if (this.video) {
+//   //   this.stopVideo(0.2);
+//   // }
+
+//   const audio = new Audio(src);
+
+//   const baseVolume = volumeOverride ?? 0.8;
+
+//   audio.loop = loop;
+//   audio.volume = this.muted ? 0 : baseVolume;
+//   audio.dataset.baseVolume = String(baseVolume);
+
+//   this.video = audio;
+
+//   audio.play().catch(() => {
+//     // Video playback failed
+//   });
+// }
+
+// stopVideo(fade = 0.2) {
+//   const audio = this.video;
+
+//   this.video = null;
+
+//   if (!audio) return;
+
+//   if (fade > 0 && !this.muted) {
+//     const startVolume = audio.volume;
+//     const startTime = performance.now();
+
+//     const tick = () => {
+//       const t = (performance.now() - startTime) / (fade * 1000);
+
+//       audio.volume = Math.max(0, startVolume * (1 - t));
+
+//       if (t < 1) {
+//         requestAnimationFrame(tick);
+//       } else {
+//         audio.pause();
+//       }
+//     };
+
+//     requestAnimationFrame(tick);
+//   } else {
+//     audio.pause();
+//   }
+// }
 
 function playVideo() {
   elements.stage.classList.remove("is-entering");

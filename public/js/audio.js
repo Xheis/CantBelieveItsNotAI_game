@@ -38,6 +38,7 @@ const ANNOUNCEMENT_VOLUMES = {
 
 const MUSIC_VOLUMES = {
   lobby: 0.32,
+  rules: 0.20,
   leaderboard: 0.32,
   final: 0.32,
   countdown: 0.22,
