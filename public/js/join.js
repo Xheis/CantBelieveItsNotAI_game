@@ -16,7 +16,7 @@ const elements = {
   nameInput: $("[data-name-input]"),
   avatarPreview: $("[data-avatar-preview]"),
   emojiGrid: $("[data-emoji-grid]"),
-  uploadButton: $("[data-upload-button]"),
+  // uploadButton: $("[data-upload-button]"),
   avatarFile: $("[data-avatar-file]"),
   joinButton: $("[data-join-button]"),
   status: $("[data-status]"),
@@ -75,15 +75,19 @@ setAvatarTab(avatarTab);
 socket = createSocket("player", {
   onOpen: () => {
     setText(elements.status, "Connected.");
+
     if (hasProfile) {
       sendJoin();
     }
   },
+
   onWelcome: (message) => {
     you = message.you;
     saveProfile();
   },
+
   onState: handleState,
+
   onError: (message) => {
     setText(elements.status, message.message ?? "Connection error.");
   },
@@ -139,7 +143,7 @@ elements.speedToggle.addEventListener("change", () => {
 
 elements.roundsInput.addEventListener("change", () => {
   haptic(12);
-
+  console.log("[CLIENT] roundsInput changed to:", elements.roundsInput.value);
   const value = Number(elements.roundsInput.value);
 
   socket.send({
@@ -150,7 +154,7 @@ elements.roundsInput.addEventListener("change", () => {
 
 elements.voteSecondsInput.addEventListener("change", () => {
   haptic(12);
-
+  console.log("[CLIENT] roundsInput changed to:", elements.voteSecondsInput.value);
   const seconds = Number(elements.voteSecondsInput.value);
 
   socket.send({
@@ -189,6 +193,12 @@ for (const button of elements.voteButtons) {
   button.addEventListener("click", () => {
     if (state?.phase !== "voting") return;
 
+    const alreadyVoted = Boolean(state.game.yourVote);
+
+    if (alreadyVoted && !state.settings.allowVoteChange) {
+      return;
+    }
+
     audio.unlock();
     audio.playSfx("vote-select");
     haptic(18);
@@ -199,8 +209,20 @@ for (const button of elements.voteButtons) {
     });
 
     selectVoteButton(button.dataset.vote);
-    setText(elements.voteStatus, "Vote sent. You can change until time ends.");
+    // }
   });
+}
+
+function disableVoteButtons() {
+  for (const button of elements.voteButtons) {
+    //button.disabled = true;
+  }
+}
+
+function enableVoteButtons() {
+  for (const button of elements.voteButtons) {
+    button.disabled = false;
+  }
 }
 
 startFrameLoop();
@@ -361,14 +383,24 @@ function renderWatch() {
 }
 
 function renderVoting() {
+  enableVoteButtons();
   selectVoteButton(state.game.yourVote);
 
-  setText(
-    elements.voteStatus,
-    state.game.yourVote
-      ? `Current vote: ${state.game.yourVote.toUpperCase()}`
-      : "Tap AI or REAL.",
-  );
+  const hasVoted = Boolean(state.game.yourVote);
+  console.log("[CLIENT] hasVoted reported as:", hasVoted);
+  console.log("[CLIENT] allowVoteChange reported as:", hasVoted);
+  if (hasVoted) {
+    if (state.settings.allowVoteChange) {
+      setText(elements.voteStatus, `Current vote: ${state.game.yourVote.toUpperCase()}. You can change.`);
+      enableVoteButtons();
+    } else {
+      setText(elements.voteStatus, `Vote locked: ${state.game.yourVote.toUpperCase()}.`);
+      disableVoteButtons();
+    }
+  } else {
+    setText(elements.voteStatus, "Tap AI or REAL.");
+    enableVoteButtons();
+  }
 }
 
 function renderResult() {
