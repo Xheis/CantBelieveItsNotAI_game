@@ -372,6 +372,24 @@ function renderWatch() {
     return;
   }
 
+  if (state.phase === "rulesDemo") {
+    setText(elements.watchTitle, "Demo Round");
+    setText(
+      elements.watchText,
+      "Watch how a round works on the main screen.",
+    );
+    return;
+  }
+
+  if (state.phase === "rulesSplash") {
+    setText(elements.watchTitle, "Get Ready!");
+    setText(
+      elements.watchText,
+      "The first round is about to begin.",
+    );
+    return;
+  }
+
   setText(elements.watchTitle, `Round ${state.roundNumber}`);
 
   setText(

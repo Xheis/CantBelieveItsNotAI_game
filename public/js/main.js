@@ -50,6 +50,15 @@ const elements = {
   rulesLeaderboard: $("[data-rules-leaderboard]"),
   rulesSteps: $("[data-rules-steps]"),
   rulesCountdown: $("[data-rules-countdown]"),
+  rulesDemoPlayers: $("[data-rules-demo-players]"),
+  rulesDemoStage: $("[data-rules-demo-stage]"),
+  rulesDemoVideo: $("[data-rules-demo-video]"),
+  rulesDemoCountdown: $("[data-rules-demo-countdown]"),
+  rulesDemoCountdownProgress: $("[data-rules-demo-countdown-progress]"),
+  rulesDemoCountdownNumber: $("[data-rules-demo-countdown-number]"),
+  rulesDemoStamp: $("[data-rules-demo-stamp]"),
+  rulesDemoLeaderboard: $("[data-rules-demo-leaderboard]"),
+  rulesDemoLeaderboardList: $("[data-rules-demo-leaderboard-list]"),
 
   countdown: $("[data-countdown]"),
   countdownProgress: $("[data-countdown-progress]"),
@@ -90,6 +99,8 @@ let rulesDemoTimeout = null;
 let rulesStepInterval = null;
 let lastRulesKey = null;
 let lastRevealKey = null;
+let rulesDemoState = null;
+let lastRulesDemoKey = null;
 
 let availableIps = [];
 let selectedIp = localStorage.getItem("icbina:selectedIp") || null;
@@ -215,6 +226,19 @@ function render() {
   if (state.phase === "rules") {
     showPanel("rules");
     renderRules();
+    //pauseVideo();
+    return;
+  }
+
+  if (state.phase === "rulesDemo") {
+    showPanel("rulesDemo");
+    renderRulesDemo();
+    pauseVideo();
+    return;
+  }
+
+  if (state.phase === "rulesSplash") {
+    showPanel("rulesSplash");
     pauseVideo();
     return;
   }
@@ -322,33 +346,33 @@ function renderLobby() {
   emojiSaver.start();
 }
 
-const RULES_CAST = [
-  {
-    id: "rules-1",
-    name: "Alice",
-    avatar: { kind: "emoji", value: "🦝" },
-  },
-  {
-    id: "rules-2",
-    name: "Bob",
-    avatar: { kind: "emoji", value: "🍕" },
-  },
-  {
-    id: "rules-3",
-    name: "Chloe",
-    avatar: { kind: "emoji", value: "🐸" },
-  },
-  {
-    id: "rules-4",
-    name: "Dan",
-    avatar: { kind: "emoji", value: "🤖" },
-  },
-  {
-    id: "rules-5",
-    name: "Erin",
-    avatar: { kind: "emoji", value: "🔥" },
-  },
-];
+// const RULES_CAST = [
+//   {
+//     id: "rules-1",
+//     name: "Alice",
+//     avatar: { kind: "emoji", value: "🦝" },
+//   },
+//   {
+//     id: "rules-2",
+//     name: "Bob",
+//     avatar: { kind: "emoji", value: "🍕" },
+//   },
+//   {
+//     id: "rules-3",
+//     name: "Chloe",
+//     avatar: { kind: "emoji", value: "🐸" },
+//   },
+//   {
+//     id: "rules-4",
+//     name: "Dan",
+//     avatar: { kind: "emoji", value: "🤖" },
+//   },
+//   {
+//     id: "rules-5",
+//     name: "Erin",
+//     avatar: { kind: "emoji", value: "🔥" },
+//   },
+// ];
 
 function renderRules() {
   const key = `rules:${state.phaseStartedAt}`;
@@ -361,91 +385,277 @@ function renderRules() {
   updateRulesCountdown();
 }
 
-function startRulesDemo() {
+const DEMO_PLAYERS = [
+  { id: "demo-1", name: "Alice", avatar: { kind: "emoji", value: "🦝" } },
+  { id: "demo-2", name: "Bob", avatar: { kind: "emoji", value: "🍕" } },
+  { id: "demo-3", name: "Chloe", avatar: { kind: "emoji", value: "🐸" } },
+  { id: "demo-4", name: "Dan", avatar: { kind: "emoji", value: "🤖" } },
+  { id: "demo-5", name: "Erin", avatar: { kind: "emoji", value: "🔥" } },
+];
+
+function renderRulesDemo() {
+  const key = `rulesDemo:${state.phaseStartedAt}`;
+
+  if (key === lastRulesDemoKey) {
+    updateRulesDemoCountdown();
+    return;
+  }
+
+  lastRulesDemoKey = key;
+
   stopRulesDemo();
+  startRulesDemo();
+}
 
-  if (!elements.rulesLeaderboard) return;
+function startRulesDemo() {
+  const demoVideoUrl = "/assets/rules/demo.mp4";
 
-  let players = RULES_CAST.map((player) => ({
-    ...player,
-    score: 0,
-  }));
+  rulesDemoState = {
+    phase: "intro",
+    startedAt: Date.now(),
+    players: DEMO_PLAYERS.map((p) => ({
+      ...p,
+      vote: null,
+      voteLockedAt: null,
+      score: 0,
+    })),
+    videoUrl: demoVideoUrl,
+    result: "ai",
+  };
 
-  let entries = players.map((player, index) => ({
-    ...player,
-    rank: index + 1,
-    prevRank: null,
-    prevScore: 0,
-    pointsEarned: 0,
-    delta: 0,
-  }));
+  renderDemoPlayers();
 
-  renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
+  elements.rulesDemoVideo.src = demoVideoUrl;
+  //elements.rulesDemoVideo.load();
+  //elements.rulesDemoVideo.pause();
+
+  elements.rulesDemoCountdown.hidden = true;
+  elements.rulesDemoStamp.hidden = true;
+  elements.rulesDemoLeaderboard.hidden = true;
+  elements.rulesDemoStage.hidden = false;
+
+  rulesDemoTimeout = setTimeout(() => {
+    rulesDemoState.phase = "playing";
+    elements.rulesDemoVideo.play().catch(() => {});
+  }, 2000);
+
+  rulesDemoTimeout = setTimeout(() => {
+    rulesDemoState.phase = "voting";
+    elements.rulesDemoVideo.pause();
+    elements.rulesDemoCountdown.hidden = false;
+
+    scheduleDemoVotes();
+  }, 9000);
+
+  rulesDemoTimeout = setTimeout(() => {
+    rulesDemoState.phase = "reveal";
+    elements.rulesDemoCountdown.hidden = true;
+    showDemoStamp(rulesDemoState.result);
+  }, 16000);
+
+  rulesDemoTimeout = setTimeout(() => {
+    rulesDemoState.phase = "leaderboard";
+    elements.rulesDemoStage.hidden = true;
+    elements.rulesDemoLeaderboard.hidden = false;
+    renderDemoLeaderboard();
+  }, 19000);
+}
+
+function scheduleDemoVotes() {
+  for (const player of rulesDemoState.players) {
+    const delay = 500 + Math.random() * 5500;
+
+    setTimeout(() => {
+      if (rulesDemoState.phase !== "voting") return;
+
+      player.vote = Math.random() < 0.5 ? "ai" : "real";
+      player.voteLockedAt = Date.now();
+      renderDemoPlayers();
+    }, delay);
+    audio.playSfx("vote-select");
+  }
+}
+
+function renderDemoPlayers() {
+  if (!rulesDemoState) return;
+
+  clear(elements.rulesDemoPlayers);
+
+  for (const player of rulesDemoState.players) {
+    const row = document.createElement("div");
+    row.className = "rules-demo-player";
+
+    row.append(renderAvatar(player.avatar, "avatar avatar--small"));
+
+    const name = document.createElement("div");
+    name.className = "rules-demo-player__name";
+    name.textContent = player.name;
+
+    const vote = document.createElement("div");
+    vote.className = "rules-demo-player__vote";
+
+    if (player.vote) {
+      vote.textContent = player.vote.toUpperCase();
+      vote.classList.add(player.vote === rulesDemoState.result ? "is-correct" : "is-wrong");
+    } else if (rulesDemoState.phase === "voting") {
+      vote.textContent = "•••";
+      vote.classList.add("is-voting");
+    } else {
+      vote.textContent = "—";
+    }
+
+    row.append(name, vote);
+    elements.rulesDemoPlayers.append(row);
+  }
+}
+
+function showDemoStamp(result) {
+  elements.rulesDemoStamp.textContent = result === "ai" ? "AI" : "REAL";
+  elements.rulesDemoStamp.className = `stamp stamp--${result}`;
+  elements.rulesDemoStamp.hidden = false;
+
+  void elements.rulesDemoStamp.offsetWidth;
+  elements.rulesDemoStamp.classList.add("is-visible");
+}
+
+function renderDemoLeaderboard() {
+  if (!rulesDemoState) return;
+
+  const correctAnswer = rulesDemoState.result;
+
+  for (const player of rulesDemoState.players) {
+    if (player.vote === correctAnswer) {
+      player.score = 1000 + Math.floor(Math.random() * 500);
+    }
+  }
+
+  const entries = [...rulesDemoState.players]
+    .sort((a, b) => b.score - a.score)
+    .map((player, index) => ({
+      ...player,
+      rank: index + 1,
+      prevRank: null,
+      prevScore: 0,
+      pointsEarned: player.score,
+      delta: 0,
+    }));
+
+  leaderboardRows(elements.rulesDemoLeaderboardList, entries, {
     compact: false,
     youId: null,
   });
-
-  const tick = () => {
-    if (state?.phase !== "rules") return;
-
-    for (const player of players) {
-      if (Math.random() < 0.65) {
-        const options = [1000, 1000, 1500, 2000];
-        player.score += options[Math.floor(Math.random() * options.length)];
-      }
-    }
-
-    const prevById = new Map(entries.map((entry) => [entry.id, entry]));
-
-    const sorted = [...players].sort((a, b) => b.score - a.score);
-
-    entries = sorted.map((player, index) => {
-      const prev = prevById.get(player.id);
-
-      const prevRank = prev?.rank ?? null;
-      const prevScore = prev?.score ?? 0;
-
-      return {
-        ...player,
-        rank: index + 1,
-        prevRank,
-        prevScore,
-        pointsEarned: Math.max(0, player.score - prevScore),
-        delta: prevRank ? prevRank - (index + 1) : 0,
-      };
-    });
-
-    renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
-      compact: false,
-      youId: null,
-    });
-  };
-
-  rulesDemoTimeout = setTimeout(tick, 7500);
-  rulesDemoInterval = setInterval(tick, 10000);
-
-  startRulesSteps();
 }
 
-function startRulesSteps() {
-  if (!elements.rulesSteps) return;
+function updateRulesDemoCountdown() {
+  if (!rulesDemoState || rulesDemoState.phase !== "voting") return;
 
-  const steps = [...elements.rulesSteps.children];
+  const elapsed = Date.now() - (rulesDemoState.startedAt + 9000);
+  const remaining = Math.max(0, 7000 - elapsed);
+  const total = 7000;
 
-  let index = 0;
-
-  const activate = () => {
-    steps.forEach((step, stepIndex) => {
-      step.classList.toggle("is-active", stepIndex === index);
-    });
-
-    index = (index + 1) % steps.length;
-  };
-
-  activate();
-
-  rulesStepInterval = setInterval(activate, 2300);
+  updateCountdown({
+    remainingMs: remaining,
+    totalMs: total,
+    root: elements.rulesDemoCountdown,
+    progressEl: elements.rulesDemoCountdownProgress,
+    numberEl: elements.rulesDemoCountdownNumber,
+  });
 }
+
+// function stopRulesDemo() {
+//   clearTimeout(rulesDemoTimeout);
+//   clearInterval(rulesDemoInterval);
+
+//   rulesDemoTimeout = null;
+//   rulesDemoInterval = null;
+//   rulesDemoState = null;
+// }
+
+// function startRulesDemo() {
+//   stopRulesDemo();
+
+//   if (!elements.rulesLeaderboard) return;
+
+//   let players = RULES_CAST.map((player) => ({
+//     ...player,
+//     score: 0,
+//   }));
+
+//   let entries = players.map((player, index) => ({
+//     ...player,
+//     rank: index + 1,
+//     prevRank: null,
+//     prevScore: 0,
+//     pointsEarned: 0,
+//     delta: 0,
+//   }));
+
+//   renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
+//     compact: false,
+//     youId: null,
+//   });
+
+//   const tick = () => {
+//     if (state?.phase !== "rules") return;
+
+//     for (const player of players) {
+//       if (Math.random() < 0.65) {
+//         const options = [1000, 1000, 1500, 2000];
+//         player.score += options[Math.floor(Math.random() * options.length)];
+//       }
+//     }
+
+//     const prevById = new Map(entries.map((entry) => [entry.id, entry]));
+
+//     const sorted = [...players].sort((a, b) => b.score - a.score);
+
+//     entries = sorted.map((player, index) => {
+//       const prev = prevById.get(player.id);
+
+//       const prevRank = prev?.rank ?? null;
+//       const prevScore = prev?.score ?? 0;
+
+//       return {
+//         ...player,
+//         rank: index + 1,
+//         prevRank,
+//         prevScore,
+//         pointsEarned: Math.max(0, player.score - prevScore),
+//         delta: prevRank ? prevRank - (index + 1) : 0,
+//       };
+//     });
+
+//     renderLeaderboardAnimated(elements.rulesLeaderboard, entries, {
+//       compact: false,
+//       youId: null,
+//     });
+//   };
+
+//   rulesDemoTimeout = setTimeout(tick, 7500);
+//   rulesDemoInterval = setInterval(tick, 10000);
+
+//   startRulesSteps();
+// }
+
+// function startRulesSteps() {
+//   if (!elements.rulesSteps) return;
+
+//   const steps = [...elements.rulesSteps.children];
+
+//   let index = 0;
+
+//   const activate = () => {
+//     steps.forEach((step, stepIndex) => {
+//       step.classList.toggle("is-active", stepIndex === index);
+//     });
+
+//     index = (index + 1) % steps.length;
+//   };
+
+//   activate();
+
+//   rulesStepInterval = setInterval(activate, 2300);
+// }
 
 function stopRulesDemo() {
   clearTimeout(rulesDemoTimeout);
@@ -731,11 +941,11 @@ function phaseEffects() {
   stopLobbyVoice();
 
   if (state.phase == "rules") {
-    audio.stopVoice();
-    console.log("state.phase = rules, so stop the lobby voice lines");
+    //audio.stopVoice();
+    //console.log("state.phase = rules, so stop the lobby voice lines");
   }
   // Stop rules announcement if we are leaving rules.
-  audio.stopAnnouncement(0.15);
+  //audio.stopAnnouncement(0.15); //removed because we're breaking demos up now.
 
   // Only clear the stamp timeout when leaving reveal,
   // not when entering reveal.
@@ -763,11 +973,21 @@ function phaseEffects() {
     case "rules": {
       audio.stopMusic();
 
-      if (clock.remainingMs(state) > 3000) {
+      //if (clock.remainingMs(state) > 3000) {
         audio.playAnnouncement("rules");
-      }
+      ///}
 
       startRulesDemo();
+      break;
+    }
+    case "rulesDemo": {
+      audio.stopMusic();
+      break;
+    }
+
+    case "rulesSplash": {
+      audio.stopMusic();
+      audio.playSfx("winner");
       break;
     }
 
@@ -940,6 +1160,9 @@ function updateDynamic() {
 
   if (state.phase === "rules") {
     updateRulesCountdown();
+  }
+  if (state.phase === "rulesDemo") {
+  updateRulesDemoCountdown();
   }
 
   const remaining = clock.remainingMs(state);

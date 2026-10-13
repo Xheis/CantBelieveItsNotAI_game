@@ -1665,6 +1665,137 @@ button {
   outline-offset: 2px;
 }
 
+/* ======================================================
+   Rules demo simulation
+   ====================================================== */
+
+.panel--rules-demo {
+  padding: 0;
+}
+
+.rules-demo {
+  display: grid;
+  grid-template-columns: 28rem 1fr;
+  height: 100%;
+  gap: 0;
+}
+
+.rules-demo__left {
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: auto;
+}
+
+.rules-demo__right {
+  position: relative;
+  overflow: hidden;
+}
+
+.rules-demo__players {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rules-demo-player {
+  display: grid;
+  grid-template-columns: 2.8rem 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.rules-demo-player__name {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.rules-demo-player__vote {
+  font-weight: 1000;
+  font-size: 1.2rem;
+  min-width: 4rem;
+  text-align: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rules-demo-player__vote.is-voting {
+  animation: pulse 1s ease infinite;
+  color: var(--accent-2);
+}
+
+.rules-demo-player__vote.is-correct {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--real);
+}
+
+.rules-demo-player__vote.is-wrong {
+  background: rgba(244, 63, 94, 0.2);
+  color: var(--ai);
+}
+
+.rules-demo__leaderboard {
+  position: absolute;
+  inset: 2rem;
+  overflow: auto;
+}
+
+.stage--demo {
+  height: 100%;
+  border-radius: 0;
+  border: none;
+}
+
+@media (max-width: 900px) {
+  .rules-demo {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .rules-demo__left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    max-height: 40vh;
+  }
+}
+
+/* ======================================================
+   Rules splash
+   ====================================================== */
+
+.panel--rules-splash {
+  padding: 0;
+}
+
+.rules-splash {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  gap: 2rem;
+  text-align: center;
+}
+
+.rules-splash__logo {
+  max-width: 60vw;
+  max-height: 50vh;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 60px rgba(139, 92, 246, 0.4));
+  animation: winner-bounce 2s ease infinite;
+}
+
+.rules-splash__text {
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 1000;
+  letter-spacing: -0.05em;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @keyframes stage-shake {
 
   0%,

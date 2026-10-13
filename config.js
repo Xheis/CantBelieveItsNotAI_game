@@ -6,7 +6,9 @@ export const CONFIG = {
 
   rounds: 10,
 
-  rulesMs: 32000,
+  rulesMs: 10000,
+  rulesDemoMs: 18000,
+  rulesSplashMs: 4000,
   skipRules: false,
   introMs: 2200,
   playMs: 7000,
