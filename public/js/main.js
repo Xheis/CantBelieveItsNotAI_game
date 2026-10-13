@@ -26,6 +26,9 @@ const elements = {
   warnings: $("[data-warnings]"),
   playerGrid: $("[data-player-grid]"),
 
+  ipSelector: $("[data-ip-selector]"),
+  ipSelect: $("[data-ip-select]"),
+
   packLogo: $("[data-pack-logo]"),
   packName: $("[data-pack-name]"),
   packHeroLogo: $("[data-pack-hero-logo]"),
@@ -88,6 +91,8 @@ let rulesStepInterval = null;
 let lastRulesKey = null;
 let lastRevealKey = null;
 
+let availableIps = [];
+let selectedIp = localStorage.getItem("icbina:selectedIp") || null;
 
 let revealTimeout = null;
 let cueTimeout = null;
@@ -114,6 +119,12 @@ elements.unlockButton.addEventListener("click", async () => {
   });
 
   fetchLobbyInfo();
+  elements.ipSelect.addEventListener("change", () => {
+  selectedIp = elements.ipSelect.value;
+  localStorage.setItem("icbina:selectedIp", selectedIp);
+
+  fetchLobbyInfo();
+  });
   startFrameLoop();
 
   audio.playMusic("lobby");
@@ -135,8 +146,14 @@ emojiSaver.start();
 
 async function fetchLobbyInfo() {
   try {
-    const response = await fetch("/api/lobby");
+    const params = selectedIp ? `?ip=${encodeURIComponent(selectedIp)}` : "";
+    const response = await fetch(`/api/lobby${params}`);
     const info = await response.json();
+
+    availableIps = info.ips || [];
+    selectedIp = info.selectedIp;
+
+    localStorage.setItem("icbina:selectedIp", selectedIp);
 
     elements.qr.src = info.qrDataUrl;
     setText(elements.joinUrl, info.primaryUrl);
@@ -144,8 +161,33 @@ async function fetchLobbyInfo() {
       elements.mdnsUrl,
       info.mdnsUrl ? `Bonjour fallback: ${info.mdnsUrl}` : "",
     );
+
+    renderIpSelector();
   } catch {
     setText(elements.joinUrl, "Could not load lobby info.");
+  }
+}
+
+function renderIpSelector() {
+  if (availableIps.length <= 1) {
+    elements.ipSelector.hidden = true;
+    return;
+  }
+
+  elements.ipSelector.hidden = false;
+
+  clear(elements.ipSelect);
+
+  for (const ip of availableIps) {
+    const option = document.createElement("option");
+    option.value = ip;
+    option.textContent = ip;
+
+    if (ip === selectedIp) {
+      option.selected = true;
+    }
+
+    elements.ipSelect.append(option);
   }
 }
 

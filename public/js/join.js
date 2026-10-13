@@ -28,6 +28,10 @@ const elements = {
   startButton: $("[data-start-button]"),
   hostWarnings: $("[data-host-warnings]"),
   playerList: $("[data-player-list]"),
+  roundsInput: $("[data-rounds-input]"),
+  voteSecondsInput: $("[data-vote-seconds-input]"),
+  allowVoteChangeToggle: $("[data-allow-vote-change-toggle]"),
+  skipRulesToggle: $("[data-skip-rules-toggle]"),
 
   watchTitle: $("[data-watch-title]"),
   watchText: $("[data-watch-text]"),
@@ -133,6 +137,46 @@ elements.speedToggle.addEventListener("change", () => {
   });
 });
 
+elements.roundsInput.addEventListener("change", () => {
+  haptic(12);
+
+  const value = Number(elements.roundsInput.value);
+
+  socket.send({
+    t: "setRounds",
+    rounds: value,
+  });
+});
+
+elements.voteSecondsInput.addEventListener("change", () => {
+  haptic(12);
+
+  const seconds = Number(elements.voteSecondsInput.value);
+
+  socket.send({
+    t: "setVoteMs",
+    voteMs: seconds * 1000,
+  });
+});
+
+elements.allowVoteChangeToggle.addEventListener("change", () => {
+  haptic(12);
+
+  socket.send({
+    t: "setAllowVoteChange",
+    enabled: elements.allowVoteChangeToggle.checked,
+  });
+});
+
+elements.skipRulesToggle.addEventListener("change", () => {
+  haptic(12);
+
+  socket.send({
+    t: "setSkipRules",
+    enabled: elements.skipRulesToggle.checked,
+  });
+});
+
 elements.startButton.addEventListener("click", () => {
   audio.unlock();
   audio.playSfx("start");
@@ -210,6 +254,10 @@ function renderLobby() {
   elements.hostSettings.hidden = !you.isHost;
 
   elements.speedToggle.checked = Boolean(state.settings.speedBonus);
+  elements.roundsInput.value = state.settings.rounds;
+  elements.voteSecondsInput.value = Math.round(state.settings.voteMs / 1000);
+  elements.allowVoteChangeToggle.checked = Boolean(state.settings.allowVoteChange);
+  elements.skipRulesToggle.checked = Boolean(state.settings.skipRules);
   elements.startButton.disabled = !state.lobby.canStart;
 
   clear(elements.packSelector);

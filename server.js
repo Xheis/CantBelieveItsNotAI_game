@@ -63,7 +63,13 @@ async function main() {
 
   app.get("/api/lobby", async (req, res) => {
     const ips = getLanIps();
-    const primaryIp = getPrimaryIp();
+    const requestedIp = req.query.ip;
+
+    let primaryIp = getPrimaryIp();
+
+    if (requestedIp && ips.includes(requestedIp)) {
+      primaryIp = requestedIp;
+    }
 
     const primaryUrl = buildJoinUrl({
       port: CONFIG.port,
@@ -77,6 +83,7 @@ async function main() {
       primaryUrl,
       mdnsUrl: mdns?.url ?? null,
       ips,
+      selectedIp: primaryIp,
       qrDataUrl,
     });
   });

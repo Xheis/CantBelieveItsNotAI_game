@@ -1607,6 +1607,64 @@ button {
   animation: stage-shake 380ms ease;
 }
 
+/* ======================================================
+   Settings group
+   ====================================================== */
+
+.settings-group {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-group__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.field--inline {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.field__input--small {
+  width: 5rem;
+  text-align: center;
+}
+
+/* ======================================================
+   IP selector
+   ====================================================== */
+
+.ip-selector {
+  margin: 1rem 0;
+}
+
+.field__input--select {
+  min-width: 12rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.field__input--select:focus-visible {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
 @keyframes stage-shake {
 
   0%,

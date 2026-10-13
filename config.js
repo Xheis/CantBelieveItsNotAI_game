@@ -7,13 +7,13 @@ export const CONFIG = {
   rounds: 10,
 
   rulesMs: 32000,
+  skipRules: false,
   introMs: 2200,
   playMs: 7000,
   voteMs: 7000,
   revealMs: 5000,
   revealSuspenseMs: 1200,
   leaderboardMs: 5000,
-
 
   minPlayers: 2,
   maxPlayers: 20,

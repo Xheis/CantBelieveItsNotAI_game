@@ -60,7 +60,42 @@
             <input type="checkbox" data-speed-toggle />
             <span>Speed Bonus</span>
           </label>
+          <div class="settings-group">
+            
+          <h4 class="settings-group__title">Game Settings</h4>
 
+          <label class="field field--inline">
+            <span class="field__label">Rounds</span>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              data-rounds-input
+              class="field__input field__input--small"
+            />
+          </label>
+
+          <label class="field field--inline">
+            <span class="field__label">Vote Time (seconds)</span>
+            <input
+              type="number"
+              min="3"
+              max="15"
+              data-vote-seconds-input
+              class="field__input field__input--small"
+            />
+          </label>
+
+          <label class="switch">
+            <input type="checkbox" data-allow-vote-change-toggle />
+            <span>Allow Vote Change</span>
+          </label>
+
+          <label class="switch">
+            <input type="checkbox" data-skip-rules-toggle />
+            <span>Skip Rules Phase</span>
+          </label>
+        </div>
           <button class="btn btn--primary btn--large" data-start-button>
             Start Game
           </button>
