@@ -215,7 +215,7 @@ for (const button of elements.voteButtons) {
 
 function disableVoteButtons() {
   for (const button of elements.voteButtons) {
-    //button.disabled = true;
+    button.disabled = true;
   }
 }
 
